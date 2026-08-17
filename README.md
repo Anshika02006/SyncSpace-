@@ -27,22 +27,16 @@ A real-time collaborative code editor built with React, Vite, Monaco Editor, and
 bash
 npm install
 
-3. Start the Yjs WebSocket server
-
+2. Start the Yjs WebSocket server
 Open the first terminal and run:
-
 npx y-websocket
-
 The server will run on:
-
 localhost:1234
+
 3. Start the React development server
-
 Open a second terminal in the same project folder and run:
-
 npm run dev
+
 4. Open the application
-
 Open the URL shown by Vite, usually:
-
 http://localhost:5173
