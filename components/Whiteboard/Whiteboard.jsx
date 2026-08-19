@@ -1,26 +1,16 @@
-// Whiteboard.jsx
-import { useState } from 'react';
+import React from 'react';
 import Toolbar from './Toolbar';
-import DrawingCanvas from './DrawingCanvas';
+import CanvasLayer from './CanvasLayer'; // <--- Must import CanvasLayer, NOT DrawingCanvas
 
-function Whiteboard() {
-  const [activeTool, setActiveTool] = useState('pen');
-  const [color, setColor] = useState('#000000');
-
+const Whiteboard = () => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Toolbar
-        activeTool={activeTool}
-        setActiveTool={setActiveTool}
-        color={color}
-        setColor={setColor}
-      />
-      <DrawingCanvas
-        activeTool={activeTool}
-        color={color}
-      />
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
+      <Toolbar />
+      <div style={{ flex: 1, height: '100%' }}>
+        <CanvasLayer />
+      </div>
     </div>
   );
-}
+};
 
 export default Whiteboard;

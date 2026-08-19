@@ -1,54 +1,57 @@
-// Toolbar.jsx
-function Toolbar({ activeTool, setActiveTool, color, setColor, onUndo, onClear }) {
-  return (
-    <div style={{ 
-      display: 'flex', 
-      gap: '10px', 
-      padding: '10px',
-      background: '#1e1e1e',
-      alignItems: 'center'
-    }}>
-      {/* Tool Buttons */}
-      <button 
-        onClick={() => setActiveTool('pen')}
-        style={{ background: activeTool === 'pen' ? 'blue' : 'gray' }}
-      >
-        🖊 Pen
-      </button>
+import React from 'react';
+import { useWhiteboardStore } from '../../store/whiteboardStore';
 
+const Toolbar = ({ onClear }) => {
+  const { tool, setTool, color, setColor, strokeWidth, setStrokeWidth } = useWhiteboardStore();
+
+  return (
+    <div className="whiteboard-toolbar">
       <button 
-        onClick={() => setActiveTool('rect')}
-        style={{ background: activeTool === 'rect' ? 'blue' : 'gray' }}
+        className={`tool-btn ${tool === 'pen' ? 'active' : ''}`} 
+        onClick={() => setTool('pen')}
+      >
+        ✏️ Pen
+      </button>
+      <button 
+        className={`tool-btn ${tool === 'rect' ? 'active' : ''}`} 
+        onClick={() => setTool('rect')}
       >
         ▭ Rect
       </button>
-
       <button 
-        onClick={() => setActiveTool('line')}
-        style={{ background: activeTool === 'line' ? 'blue' : 'gray' }}
+        className={`tool-btn ${tool === 'line' ? 'active' : ''}`} 
+        onClick={() => setTool('line')}
       >
-        ╱ Line
+        ➖ Line
       </button>
-
       <button 
-        onClick={() => setActiveTool('text')}
-        style={{ background: activeTool === 'text' ? 'blue' : 'gray' }}
+        className={`tool-btn ${tool === 'text' ? 'active' : ''}`} 
+        onClick={() => setTool('text')}
       >
         T Text
       </button>
 
-      {/* Color Picker */}
       <input 
         type="color" 
-        value={color}
-        onChange={(e) => setColor(e.target.value)}
+        value={color} 
+        onChange={(e) => setColor(e.target.value)} 
+        className="color-picker"
+      />
+      
+      <input 
+        type="range" 
+        min="1" 
+        max="20" 
+        value={strokeWidth} 
+        onChange={(e) => setStrokeWidth(Number(e.target.value))}
+        style={{ width: '60px' }}
       />
 
-      {/* Undo + Clear */}
-      <button onClick={onUndo}>↩ Undo</button>
-      <button onClick={onClear}>🗑 Clear</button>
+      <button className="tool-btn clear-btn" onClick={onClear}>
+        🗑 Clear
+      </button>
     </div>
   );
-}
+};
 
 export default Toolbar;
