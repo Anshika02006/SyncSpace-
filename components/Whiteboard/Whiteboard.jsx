@@ -1,6 +1,6 @@
 import React from 'react';
 import Toolbar from './Toolbar';
-import CanvasLayer from './CanvasLayer'; // <--- Must import CanvasLayer, NOT DrawingCanvas
+import CanvasLayer from './CanvasLayer'; // <-- Must be CanvasLayer!
 
 const Whiteboard = () => {
   return (

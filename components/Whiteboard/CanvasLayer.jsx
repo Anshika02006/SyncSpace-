@@ -4,10 +4,10 @@ import { useWhiteboardStore } from '../../store/whiteboardStore';
 import { useYjsWhiteboard } from '../../hooks/useYjsWhiteboard';
 
 const CanvasLayer = () => {
-  const { tool, color, strokeWidth } = useWhiteboardStore();
+  const { tool, color, strokeWidth, textSize } = useWhiteboardStore();
   const { yarray, addStroke } = useYjsWhiteboard();
 
-  const [localStrokes, setLocalStrokes] = useState([]);
+  const [savedShapes, setSavedShapes] = useState([]);
   const [isDrawing, setIsDrawing] = useState(false);
   const [currentShape, setCurrentShape] = useState(null);
 
@@ -19,19 +19,18 @@ const CanvasLayer = () => {
   const containerRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
-  // 1. Sync from Yjs
+  // Sync from Yjs
   useEffect(() => {
     if (!yarray) return;
     const handleChange = () => {
-      const strokes = yarray.toArray();
-      setLocalStrokes(strokes);
+      setSavedShapes(yarray.toArray());
     };
     yarray.observe(handleChange);
     handleChange();
     return () => yarray.unobserve(handleChange);
   }, [yarray]);
 
-  // 2. Resize canvas
+  // Resize canvas
   useEffect(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
@@ -46,42 +45,51 @@ const CanvasLayer = () => {
     return () => window.removeEventListener('resize', updateDimensions);
   }, []);
 
-  // --- MOUSE HANDLERS ---
+  // --- DRAWING HANDLERS ---
+
   const handleMouseDown = (e) => {
-    if (isEditingText || tool === 'text') return;
+    if (tool === 'text' || isEditingText) return;
+    
     const pos = e.target.getStage().getPointerPosition();
     setIsDrawing(true);
 
-    if (tool === 'pen') {
-      setCurrentShape({ type: 'pen', points: [pos.x, pos.y] });
-    } else if (tool === 'line') {
-      setCurrentShape({ type: 'line', points: [pos.x, pos.y, pos.x, pos.y] });
-    } else if (tool === 'rect') {
-      setCurrentShape({ type: 'rect', x: pos.x, y: pos.y, width: 0, height: 0 });
+    if (tool === 'pen' || tool === 'highlighter') {
+      setCurrentShape({ tool, points: [pos.x, pos.y] });
+    } 
+    else if (tool === 'line') {
+      setCurrentShape({ tool: 'line', points: [pos.x, pos.y, pos.x, pos.y] });
+    } 
+    else if (tool === 'rect') {
+      setCurrentShape({ tool: 'rect', x: pos.x, y: pos.y, width: 0, height: 0 });
     }
   };
 
   const handleMouseMove = (e) => {
     if (!isDrawing || !currentShape) return;
+    
     const pos = e.target.getStage().getPointerPosition();
 
-    if (tool === 'pen') {
+    if (tool === 'pen' || tool === 'highlighter') {
       setCurrentShape({
         ...currentShape,
         points: [...currentShape.points, pos.x, pos.y]
       });
-    } else if (tool === 'line') {
-      // Only update the end point (keeps it a straight line)
-      const updatedPoints = [currentShape.points[0], currentShape.points[1], pos.x, pos.y];
-      setCurrentShape({ ...currentShape, points: updatedPoints });
-    } else if (tool === 'rect') {
-      const start = { x: currentShape.x, y: currentShape.y };
-      const width = pos.x - start.x;
-      const height = pos.y - start.y;
+    } 
+    else if (tool === 'line') {
       setCurrentShape({
         ...currentShape,
-        x: width > 0 ? start.x : pos.x,
-        y: height > 0 ? start.y : pos.y,
+        points: [currentShape.points[0], currentShape.points[1], pos.x, pos.y]
+      });
+    } 
+    else if (tool === 'rect') {
+      const startX = currentShape.x;
+      const startY = currentShape.y;
+      const width = pos.x - startX;
+      const height = pos.y - startY;
+      setCurrentShape({
+        ...currentShape,
+        x: width > 0 ? startX : pos.x,
+        y: height > 0 ? startY : pos.y,
         width: Math.abs(width),
         height: Math.abs(height),
       });
@@ -92,25 +100,31 @@ const CanvasLayer = () => {
     if (!isDrawing || !currentShape) return;
     setIsDrawing(false);
 
-    // --- SAVE TO Yjs ---
+    // Save to Yjs
     if (tool === 'pen' && currentShape.points.length > 2) {
       addStroke({ ...currentShape, color, strokeWidth, id: Date.now() });
     } 
-    else if (tool === 'line' && currentShape.points.length === 4) {
-      // Only save if it's a real line (not a tiny click)
-      if (Math.abs(currentShape.points[2] - currentShape.points[0]) > 5 || 
-          Math.abs(currentShape.points[3] - currentShape.points[1]) > 5) {
+    else if (tool === 'highlighter' && currentShape.points.length > 2) {
+      addStroke({ ...currentShape, color, strokeWidth: strokeWidth * 3, opacity: 0.4, id: Date.now() });
+    }
+    else if (tool === 'line') {
+      const dx = Math.abs(currentShape.points[2] - currentShape.points[0]);
+      const dy = Math.abs(currentShape.points[3] - currentShape.points[1]);
+      if (dx > 5 || dy > 5) {
         addStroke({ ...currentShape, color, strokeWidth, id: Date.now() });
       }
     } 
-    else if (tool === 'rect' && currentShape.width > 5 && currentShape.height > 5) {
-      addStroke({ ...currentShape, color, strokeWidth, id: Date.now() });
+    else if (tool === 'rect') {
+      if (currentShape.width > 5 && currentShape.height > 5) {
+        addStroke({ ...currentShape, color, strokeWidth, id: Date.now() });
+      }
     }
 
     setCurrentShape(null);
   };
 
   // --- TEXT HANDLERS ---
+
   const handleDoubleClick = (e) => {
     if (tool !== 'text') return;
     const pos = e.target.getStage().getPointerPosition();
@@ -122,11 +136,12 @@ const CanvasLayer = () => {
   const handleTextSubmit = (e) => {
     if (e.key === 'Enter' && textInput.trim() !== '') {
       addStroke({
-        type: 'text',
+        tool: 'text',
         x: textPosition.x,
         y: textPosition.y,
         text: textInput,
         color: color,
+        fontSize: textSize, // Use adjustable text size
         id: Date.now(),
       });
       setIsEditingText(false);
@@ -137,6 +152,8 @@ const CanvasLayer = () => {
       setTextPosition(null);
     }
   };
+
+  // --- RENDER ---
 
   return (
     <div ref={containerRef} style={{ width: '100%', height: '100%', background: '#ffffff', position: 'relative' }}>
@@ -151,43 +168,45 @@ const CanvasLayer = () => {
           style={{ cursor: 'crosshair' }}
         >
           <Layer>
-            {/* Render saved strokes */}
-            {localStrokes.map((stroke) => {
-              if (stroke.type === 'pen' || stroke.type === 'line') {
+            {/* Render all saved shapes */}
+            {savedShapes.map((shape, index) => {
+              if (shape.tool === 'pen' || shape.tool === 'highlighter' || shape.tool === 'line') {
                 return (
                   <Line
-                    key={stroke.id}
-                    points={stroke.points}
-                    stroke={stroke.color}
-                    strokeWidth={stroke.strokeWidth || 3}
+                    key={index}
+                    points={shape.points}
+                    stroke={shape.color}
+                    strokeWidth={shape.strokeWidth || 3}
+                    opacity={shape.opacity || 1}
                     lineCap="round"
                     lineJoin="round"
+                    globalCompositeOperation={shape.tool === 'highlighter' ? 'multiply' : 'source-over'}
                   />
                 );
               }
-              if (stroke.type === 'rect') {
+              if (shape.tool === 'rect') {
                 return (
                   <Rect
-                    key={stroke.id}
-                    x={stroke.x}
-                    y={stroke.y}
-                    width={stroke.width}
-                    height={stroke.height}
-                    stroke={stroke.color}
-                    strokeWidth={stroke.strokeWidth || 3}
+                    key={index}
+                    x={shape.x}
+                    y={shape.y}
+                    width={shape.width}
+                    height={shape.height}
+                    stroke={shape.color}
+                    strokeWidth={shape.strokeWidth || 3}
                     fill="transparent"
                   />
                 );
               }
-              if (stroke.type === 'text') {
+              if (shape.tool === 'text') {
                 return (
                   <Text
-                    key={stroke.id}
-                    x={stroke.x}
-                    y={stroke.y}
-                    text={stroke.text}
-                    fontSize={24}
-                    fill={stroke.color}
+                    key={index}
+                    x={shape.x}
+                    y={shape.y}
+                    text={shape.text}
+                    fontSize={shape.fontSize || 24}
+                    fill={shape.color}
                     fontFamily="Arial"
                   />
                 );
@@ -195,19 +214,21 @@ const CanvasLayer = () => {
               return null;
             })}
 
-            {/* Render active drawing preview */}
+            {/* Render current active drawing */}
             {currentShape && (
               <>
-                {(currentShape.type === 'pen' || currentShape.type === 'line') && (
+                {(currentShape.tool === 'pen' || currentShape.tool === 'highlighter' || currentShape.tool === 'line') && (
                   <Line
                     points={currentShape.points}
                     stroke={color}
-                    strokeWidth={strokeWidth}
+                    strokeWidth={currentShape.tool === 'highlighter' ? strokeWidth * 3 : strokeWidth}
+                    opacity={currentShape.tool === 'highlighter' ? 0.4 : 1}
                     lineCap="round"
                     lineJoin="round"
+                    globalCompositeOperation={currentShape.tool === 'highlighter' ? 'multiply' : 'source-over'}
                   />
                 )}
-                {currentShape.type === 'rect' && (
+                {currentShape.tool === 'rect' && (
                   <Rect
                     x={currentShape.x}
                     y={currentShape.y}
@@ -237,7 +258,7 @@ const CanvasLayer = () => {
             position: 'absolute',
             left: textPosition.x,
             top: textPosition.y,
-            fontSize: '24px',
+            fontSize: `${textSize}px`, // Use adjustable text size
             color: color,
             background: 'transparent',
             border: '1px dashed #ccc',
@@ -245,7 +266,7 @@ const CanvasLayer = () => {
             padding: '2px 5px',
             fontFamily: 'Arial',
             zIndex: 10,
-            minWidth: '50px'
+            minWidth: '50px',
           }}
         />
       )}
