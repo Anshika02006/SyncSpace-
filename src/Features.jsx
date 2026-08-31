@@ -81,7 +81,6 @@ export default function Features() {
         <p>Every feature in SyncSpace is designed to reduce friction and help your team ship faster.</p>
         <div className="hero-actions">
           <button className="btn-primary">Explore All Features</button>
-          <button className="btn-outline">See Pricing</button>
         </div>
       </section>
 

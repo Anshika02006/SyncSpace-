@@ -71,8 +71,7 @@ export default function Workspace() {
         <h1>Everything your team needs,<br />in one place</h1>
         <p>SyncSpace brings together all the tools your team uses daily — no more switching between apps.</p>
         <div className="hero-actions">
-          <button className="btn-primary">Get Started Free</button>
-          <button className="btn-outline">View Demo</button>
+          <button className="btn-primary">View Demo</button>
         </div>
       </section>
 

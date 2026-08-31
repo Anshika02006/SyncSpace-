@@ -2,9 +2,44 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './space.css';
 
+const generateRoomId = () => 'sync-' + Math.random().toString(36).substring(2, 7);
+
+function CopyIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+      <rect x="9" y="9" width="13" height="13" rx="2"/>
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#52dd2f" strokeWidth="2.5" width="16" height="16">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  );
+}
+
 export default function Home() {
   const [roomId, setRoomId] = useState('');
+  const [createName, setCreateName] = useState('');
+  const [createRoomId, setCreateRoomId] = useState(generateRoomId);
+  const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(createRoomId).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  const handleCreate = () => {
+    if (createRoomId.trim()) {
+      navigate(`/workspace?room=${createRoomId.trim()}&name=${createName.trim()}`);
+    }
+  };
 
   const handleJoin = () => {
     if (roomId.trim()) {
@@ -33,13 +68,16 @@ export default function Home() {
     <p>A secure temporary workspace will be created instantly. You can give access to anyone by sharing the link.</p>
     <div className="join-room-input-row" style={{flexDirection:'column', gap:'10px'}}>
       <input type="text" className="join-room-input" placeholder="Your Name" value={createName} onChange={e => setCreateName(e.target.value)} />
-      <input type="text" className="join-room-input" placeholder="Room ID (e.g. sync-123)" value={createRoomId} onChange={e => setCreateRoomId(e.target.value)} />
+      <div className="room-id-input-wrapper">
+        <input type="text" className="join-room-input" placeholder="Room ID (e.g. sync-123)" value={createRoomId} onChange={e => setCreateRoomId(e.target.value)} />
+        <button className="copy-btn" onClick={handleCopy} title="Copy Room ID">
+          {copied ? <CheckIcon /> : <CopyIcon />}
+        </button>
+      </div>
       <button className="btn-primary join-room-btn" onClick={handleCreate}>Create & Launch Workspace</button>
     </div>
   </div>
 </section>
-
-
 
 
       <section className="join-room-section">
