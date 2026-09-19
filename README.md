@@ -24,7 +24,7 @@ A real-time collaborative code editor built with React, Vite, Monaco Editor, and
 ## Run Locally
 
 1. Install dependencies: <br>
-bash 
+bash <br>
 npm install <br>
 
 2. Start the Yjs WebSocket server <br>
