@@ -8,15 +8,13 @@ const router = express.Router();
 
 // ---- mailer setup (used only by /send-otp) ----
 let transporter;
-async function getTransporter() {
+function getTransporter() {
   if (transporter) return transporter;
-  const testAccount = await nodemailer.createTestAccount();
   transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 587,
+    service: 'gmail',
     auth: {
-      user: testAccount.user,
-      pass: testAccount.pass,
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
     },
   });
   return transporter;
@@ -100,19 +98,16 @@ router.post('/send-otp', async (req, res) => {
     user.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
     await user.save();
 
-    const t = await getTransporter();
+    const t = getTransporter();
     const info = await t.sendMail({
-      from: '"SyncSpace" <noreply@syncspace.com>',
-      to: user.email,
-      subject: 'Your SyncSpace password reset code',
-      text: `Your OTP is ${otp}. It expires in 10 minutes.`,
-      html: `<p>Your OTP is <b>${otp}</b>. It expires in 10 minutes.</p>`,
-    });
+  from: `"SyncSpace" <${process.env.EMAIL_USER}>`,
+  to: user.email,
+  subject: 'Your SyncSpace password reset code',
+  text: `Your OTP is ${otp}. It expires in 10 minutes.`,
+  html: `<p>Your OTP is <b>${otp}</b>. It expires in 10 minutes.</p>`,
+});
 
-    console.log('\n=============================');
-    console.log(`OTP for ${user.email}: ${otp}`);
-    console.log('Preview URL:', nodemailer.getTestMessageUrl(info));
-    console.log('=============================\n');
+   
 
     return res.json({ message: 'OTP sent to your email' });
   } catch (err) {

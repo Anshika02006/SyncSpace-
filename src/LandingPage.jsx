@@ -66,17 +66,17 @@ function LandingPage() {
         <h2>Everything your team needs, nothing it doesn't</h2>
         <div className="feature-grid">
           <div className="feature-card">
-            <div className="icon-box yellow">🗂️</div>
+            <div className="icon-box yellow">1</div>
             <h3>Rooms</h3>
             <p>Spin up a shared space for any project in seconds and invite the right people.</p>
           </div>
           <div className="feature-card">
-            <div className="icon-box dark">🎥</div>
+            <div className="icon-box dark">2</div>
             <h3>Meetings</h3>
             <p>Jump on a call straight from a room — no separate link to dig up.</p>
           </div>
           <div className="feature-card">
-            <div className="icon-box yellow">⚡</div>
+            <div className="icon-box yellow">3</div>
             <h3>Real-time sync</h3>
             <p>Changes show up for everyone instantly, so nobody's working off an old version.</p>
           </div>

@@ -1,8 +1,7 @@
 import { BrowserRouter , Routes, Route} from "react-router-dom";
 import LandingPage from "./LandingPage";
-import SignIn from "./SignIn";
-import SignUp from "./SignUp";
 import ForgotPassword from './ForgotPassword';
+import AuthSwitch from './AuthSwitch';
 import "./App.css";
 
 function App() {
@@ -10,9 +9,9 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signUp" element={<SignUp />} />
-        <Route path="/forgot-Password" element={<ForgotPassword />} />
+        <Route path="/signin" element={<AuthSwitch />} />
+        <Route path="/signup" element={<AuthSwitch />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
       </Routes>
     </BrowserRouter>
   );
