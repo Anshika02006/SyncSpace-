@@ -10,6 +10,7 @@
     "server": "y-websocket"
   },
   "dependencies": {
+    "lucide-react": "^1.47.0",
     "@monaco-editor/react": "^4.7.0",
     "@y/websocket-server": "^0.1.5",
     "monaco-editor": "^0.52.2",

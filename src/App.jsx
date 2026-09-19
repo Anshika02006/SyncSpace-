@@ -1,104 +1,26 @@
-import React, {
-  useState,
-} from "react";
-
+import React, { useState } from "react";
 import CodeEditor from "./components/CodeEditor";
+import Whiteboard from "../my-app/src/components/Whiteboard";
 
 function App() {
-  const [userName, setUserName] =
-    useState("Sayali");
-
-  const [editingName, setEditingName] =
-    useState(false);
-
-  const [nameInput, setNameInput] =
-    useState("Sayali");
-
-  const saveName = () => {
-    const name =
-      nameInput.trim() ||
-      "Guest";
-
-    setUserName(name);
-
-    localStorage.setItem(
-      "syncspace-name",
-      name
-    );
-
-    setEditingName(false);
-
-    window.location.reload();
-  };
+  const [userName, setUserName] = useState(
+    () => localStorage.getItem("syncspace-name") || "Guest"
+  );
 
   return (
-    <div className="app">
+    <div style={{ display: "flex", height: "100vh", width: "100vw", overflow: "hidden", background: "#0b1020" }}>
+      {/* Left: Whiteboard */}
+      <div style={{ flex: 1, minWidth: 0, height: "100%" }}>
+        <Whiteboard roomCode="ABCD12" />
+      </div>
 
-      <CodeEditor
-        userName={
-          userName
-        }
-      />
+      {/* Divider */}
+      <div style={{ width: 2, background: "#1e293b", flexShrink: 0 }} />
 
-      {editingName && (
-        <div className="name-modal">
-
-          <div className="name-box">
-
-            <h2>
-              Change your name
-            </h2>
-
-            <input
-              value={
-                nameInput
-              }
-              onChange={(event) =>
-                setNameInput(
-                  event.target
-                    .value
-                )
-              }
-              onKeyDown={(event) => {
-                if (
-                  event.key ===
-                  "Enter"
-                ) {
-                  saveName();
-                }
-              }}
-              autoFocus
-            />
-
-            <div className="name-buttons">
-
-              <button
-                className="cancel"
-                onClick={() =>
-                  setEditingName(
-                    false
-                  )
-                }
-              >
-                Cancel
-              </button>
-
-              <button
-                className="save"
-                onClick={
-                  saveName
-                }
-              >
-                Save
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-      )}
-
+      {/* Right: Code Editor */}
+      <div style={{ flex: 1, minWidth: 0, height: "100%" }}>
+        <CodeEditor userName={userName} />
+      </div>
     </div>
   );
 }
