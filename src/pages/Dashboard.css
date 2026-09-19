@@ -1,1038 +1,645 @@
-/* =====================================================
-   SYNCPACE DASHBOARD
-   ===================================================== */
+import React from "react";
+import {
+  Home,
+  LayoutGrid,
+  Clock3,
+  FileText,
+  BarChart3,
+  Settings,
+  Search,
+  Bell,
+  ChevronDown,
+  Folder,
+  Activity,
+  Users,
+  Plus,
+  Link,
+  UserPlus,
+  ArrowRight,
+  MoreVertical,
+  Code2,
+  PenTool,
+} from "lucide-react";
 
-* {
-  box-sizing: border-box;
-}
+import syncspaceLogo from "../assets/syncspace-logo.png";
 
-button {
-  font-family: inherit;
-}
+const activeSessions = [
+  {
+    name: "Project Discussion",
+    creator: "You",
+    members: 3,
+    status: "Live",
+    icon: PenTool,
+  },
+  {
+    name: "Code Review",
+    creator: "Anshika",
+    members: 2,
+    status: "Live",
+    icon: Code2,
+  },
+  {
+    name: "UI Design Board",
+    creator: "Riya",
+    members: 4,
+    status: "Idle",
+    icon: PenTool,
+  },
+];
 
-.app {
-  min-height: 100vh;
-  background: #0b1120;
-  color: #f8fafc;
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-}
+const recentRooms = [
+  {
+    name: "Project Discussion",
+    type: "Whiteboard",
+    lastActive: "2 hours ago",
+    members: 4,
+  },
+  {
+    name: "Code Review",
+    type: "Code Editor",
+    lastActive: "4 hours ago",
+    members: 2,
+  },
+  {
+    name: "UI Design Board",
+    type: "Whiteboard",
+    lastActive: "1 day ago",
+    members: 4,
+  },
+  {
+    name: "Team Planning",
+    type: "Code Editor",
+    lastActive: "2 days ago",
+    members: 2,
+  },
+];
 
-/* =====================================================
-   HEADER
-   ===================================================== */
-
-.header {
-  height: 70px;
-  background: #111827;
-  border-bottom: 1px solid #1e293b;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  padding: 0 30px;
-
-  position: sticky;
-  top: 0;
-  z-index: 20;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-}
-
-.brand span {
-  color: #60a5fa;
-}
-
-.brand-icon {
-  width: 32px;
-  height: 32px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  margin-right: 10px;
-
-  border-radius: 8px;
-
-  background: linear-gradient(
-    135deg,
-    #3b82f6,
-    #6366f1
+function SidebarItem({ icon: Icon, text, active }) {
+  return (
+    <button
+      className={`mb-2 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm transition ${
+        active
+          ? "bg-indigo-600 text-white"
+          : "text-slate-400 hover:bg-slate-800 hover:text-white"
+      }`}
+    >
+      <Icon size={19} />
+      <span>{text}</span>
+    </button>
   );
-
-  color: white;
-  font-size: 16px;
-  font-weight: 800;
 }
 
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 25px;
-}
+function AvatarGroup({ count }) {
+  return (
+    <div className="flex -space-x-2">
+      {Array.from({ length: Math.min(count, 3) }).map((_, index) => (
+        <div
+          key={index}
+          className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-[#0d1628] bg-gradient-to-br from-indigo-400 to-purple-600 text-[10px] font-bold text-white"
+        >
+          {String.fromCharCode(65 + index)}
+        </div>
+      ))}
 
-.icon-button {
-  position: relative;
-
-  border: none;
-  background: transparent;
-
-  color: #94a3b8;
-
-  font-size: 17px;
-
-  cursor: pointer;
-
-  padding: 8px;
-}
-
-.icon-button:hover {
-  color: #ffffff;
-}
-
-.notification-dot {
-  position: absolute;
-
-  width: 6px;
-  height: 6px;
-
-  background: #ef4444;
-
-  border-radius: 50%;
-
-  top: 5px;
-  right: 5px;
-}
-
-.profile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  cursor: pointer;
-}
-
-.profile-avatar {
-  width: 35px;
-  height: 35px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 50%;
-
-  background: linear-gradient(
-    135deg,
-    #3b82f6,
-    #8b5cf6
+      {count > 3 && (
+        <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-[#0d1628] bg-slate-700 text-[10px] text-white">
+          +{count - 3}
+        </div>
+      )}
+    </div>
   );
-
-  color: white;
-
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.profile-info {
-  display: flex;
-  flex-direction: column;
-
-  gap: 2px;
-}
-
-.profile-info strong {
-  font-size: 13px;
-}
-
-.profile-info span {
-  color: #64748b;
-  font-size: 10px;
-}
-
-.arrow {
-  color: #64748b;
-  font-size: 16px;
-}
-
-/* =====================================================
-   LAYOUT
-   ===================================================== */
-
-.layout {
-  display: flex;
-  min-height: calc(100vh - 70px);
-}
-
-/* =====================================================
-   SIDEBAR
-   ===================================================== */
-
-.sidebar {
-  width: 235px;
-
-  flex-shrink: 0;
-
-  background: #0f172a;
-
-  border-right: 1px solid #1e293b;
-
-  padding: 28px 14px;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.menu-title {
-  padding: 0 14px;
-  margin-bottom: 12px;
-
-  color: #475569;
-
-  font-size: 10px;
-  font-weight: 700;
-
-  letter-spacing: 1.5px;
-}
-
-.menu-title.second {
-  margin-top: 30px;
-}
-
-.navigation {
-  display: flex;
-  flex-direction: column;
-
-  gap: 5px;
-}
-
-.nav-link {
-  width: 100%;
-
-  display: flex;
-  align-items: center;
-
-  gap: 13px;
-
-  padding: 11px 13px;
-
-  border: none;
-  border-radius: 8px;
-
-  background: transparent;
-
-  color: #94a3b8;
-
-  font-size: 13px;
-
-  cursor: pointer;
-
-  text-align: left;
-
-  transition: all 0.2s ease;
-}
-
-.nav-link:hover {
-  background: #172033;
-  color: #f8fafc;
-}
-
-.nav-link.active {
-  background: #1d3b70;
-  color: #ffffff;
-}
-
-.nav-icon {
-  width: 19px;
-
-  text-align: center;
-
-  font-size: 16px;
-}
-
-.nav-count {
-  margin-left: auto;
-
-  min-width: 20px;
-
-  padding: 2px 6px;
-
-  border-radius: 10px;
-
-  background: #26344a;
-
-  color: #94a3b8;
-
-  font-size: 10px;
-
-  text-align: center;
-}
-
-.nav-link.active .nav-count {
-  background: #2563eb;
-  color: white;
-}
-
-/* =====================================================
-   SIDEBAR BOTTOM
-   ===================================================== */
-
-.sidebar-bottom {
-  border-top: 1px solid #1e293b;
-
-  padding-top: 18px;
-}
-
-.connection {
-  display: flex;
-  align-items: center;
-
-  gap: 10px;
-
-  padding: 10px 12px;
-
-  background: #111c2e;
-
-  border: 1px solid #1e293b;
-
-  border-radius: 8px;
-}
-
-.connection-indicator {
-  width: 7px;
-  height: 7px;
-
-  flex-shrink: 0;
-
-  background: #22c55e;
-
-  border-radius: 50%;
-
-  box-shadow:
-    0 0 8px rgba(34, 197, 94, 0.6);
-}
-
-.connection div {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.connection strong {
-  font-size: 11px;
-  color: #cbd5e1;
-}
-
-.connection span:last-child {
-  font-size: 9px;
-  color: #64748b;
-}
-
-.version {
-  margin-top: 15px;
-
-  color: #334155;
-
-  text-align: center;
-
-  font-size: 9px;
-}
-
-/* =====================================================
-   MAIN
-   ===================================================== */
-
-.main {
-  flex: 1;
-
-  max-width: 1250px;
-
-  padding: 40px 48px;
-
-  overflow: hidden;
-}
-
-/* =====================================================
-   WELCOME
-   ===================================================== */
-
-.welcome {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-
-  margin-bottom: 30px;
 }
 
-.welcome-label {
-  margin: 0 0 8px;
+function StatCard({ icon: Icon, title, value }) {
+  return (
+    <div className="group rounded-2xl border border-slate-800 bg-[#111a2d] p-4 transition hover:border-indigo-500/50">
+      <div className="flex items-center justify-between">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-400">
+          <Icon size={20} />
+        </div>
 
-  color: #3b82f6;
+        <ArrowRight
+          size={16}
+          className="text-slate-600 group-hover:text-indigo-400"
+        />
+      </div>
 
-  font-size: 10px;
-  font-weight: 700;
+      <p className="mt-4 text-xs text-slate-500">{title}</p>
 
-  letter-spacing: 1.5px;
+      <p className="mt-1 text-2xl font-bold text-white">{value}</p>
+    </div>
+  );
 }
 
-.welcome h1 {
-  margin: 0;
+function QuickAction({ icon: Icon, title, description }) {
+  return (
+    <button className="rounded-xl border border-slate-800 bg-[#111b30] p-4 text-left transition hover:border-indigo-500/50 hover:bg-[#151f35]">
+      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 text-white">
+        <Icon size={18} />
+      </div>
 
-  font-size: 29px;
-  font-weight: 700;
+      <h3 className="mt-3 text-sm font-semibold text-white">{title}</h3>
 
-  letter-spacing: -0.5px;
+      <p className="mt-2 text-xs leading-5 text-slate-500">
+        {description}
+      </p>
+    </button>
+  );
 }
 
-.welcome h1 span {
-  margin-left: 8px;
-}
-
-.welcome-text {
-  margin: 8px 0 0;
-
-  color: #64748b;
-
-  font-size: 13px;
-}
-
-.online-status {
-  display: flex;
-  align-items: center;
-
-  gap: 7px;
-
-  padding: 7px 11px;
-
-  background: #0f2b20;
-
-  border: 1px solid #164e35;
-
-  border-radius: 20px;
-
-  color: #4ade80;
-
-  font-size: 10px;
-}
-
-.online-status span {
-  width: 6px;
-  height: 6px;
-
-  background: #22c55e;
-
-  border-radius: 50%;
-}
-
-/* =====================================================
-   ACTION CARDS
-   ===================================================== */
-
-.action-grid {
-  display: grid;
-
-  grid-template-columns: 1fr 1fr;
-
-  gap: 18px;
-
-  margin-bottom: 42px;
-}
-
-.action-card {
-  min-height: 105px;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  padding: 22px;
-
-  border-radius: 12px;
-
-  color: white;
-
-  cursor: pointer;
-
-  text-align: left;
-
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease;
-}
-
-.action-card:hover {
-  transform: translateY(-3px);
-}
-
-.create-room {
-  background:
-    linear-gradient(
-      135deg,
-      #172f5e,
-      #173a78
-    );
-
-  border: 1px solid #2855a1;
-}
-
-.join-room {
-  background:
-    linear-gradient(
-      135deg,
-      #292258,
-      #36287a
-    );
-
-  border: 1px solid #5945b0;
-}
-
-.action-content {
-  display: flex;
-  align-items: center;
-
-  gap: 16px;
-}
-
-.action-icon {
-  width: 48px;
-  height: 48px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 10px;
-
-  font-size: 26px;
-}
-
-.action-icon.blue {
-  background: rgba(59, 130, 246, 0.2);
-  color: #60a5fa;
-}
-
-.action-icon.purple {
-  background: rgba(139, 92, 246, 0.2);
-  color: #a78bfa;
-}
-
-.action-card h3 {
-  margin: 0 0 5px;
-
-  font-size: 15px;
-}
-
-.action-card p {
-  margin: 0;
-
-  color: #94a3b8;
+export default function Dashboard() {
+  return (
+    <div className="min-h-screen bg-[#070d1b] text-white">
+      <div className="flex min-h-screen">
 
-  font-size: 11px;
-}
-
-.action-arrow {
-  color: #94a3b8;
-
-  font-size: 19px;
-}
+        {/* ================= SIDEBAR ================= */}
 
-/* =====================================================
-   SECTIONS
-   ===================================================== */
+        <aside className="hidden w-[240px] flex-shrink-0 border-r border-slate-800 bg-[#091223] lg:flex lg:flex-col">
 
-.content-section {
-  margin-bottom: 40px;
-}
+          {/* LOGO */}
+          <div className="flex h-[80px] items-center border-b border-slate-800 px-5">
+            <img
+              src={syncspaceLogo}
+              alt="SyncSpace"
+              className="max-h-12 max-w-[185px] object-contain"
+            />
+          </div>
 
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+          {/* MENU */}
 
-  margin-bottom: 15px;
-}
+          <nav className="flex-1 px-4 py-6">
 
-.section-header h2 {
-  margin: 0 0 4px;
+            <SidebarItem
+              icon={Home}
+              text="Dashboard"
+              active
+            />
 
-  font-size: 16px;
-  font-weight: 600;
+            <SidebarItem
+              icon={LayoutGrid}
+              text="My Rooms"
+            />
 
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-}
+            <SidebarItem
+              icon={Clock3}
+              text="Recent"
+            />
 
-.section-header p {
-  margin: 0;
+            <SidebarItem
+              icon={FileText}
+              text="Templates"
+            />
 
-  color: #64748b;
+            <SidebarItem
+              icon={BarChart3}
+              text="Analytics"
+            />
 
-  font-size: 11px;
-}
+            <SidebarItem
+              icon={Settings}
+              text="Settings"
+            />
 
-.live-badge {
-  display: flex;
-  align-items: center;
+          </nav>
 
-  gap: 6px;
+          {/* SIDEBAR BOTTOM */}
 
-  padding: 5px 9px;
+          <div className="border-t border-slate-800 p-5">
 
-  border-radius: 15px;
+            <div className="flex items-center gap-2 text-sm font-semibold text-indigo-400">
+              <Users size={18} />
+              Collaborate
+            </div>
 
-  background: #351d24;
+            <p className="mt-2 text-xs text-slate-500">
+              Build • Create • Collaborate
+            </p>
 
-  color: #f87171;
+            <p className="mt-2 text-xs leading-5 text-slate-600">
+              Real-time whiteboard & code editor
+              <br />
+              for modern teams.
+            </p>
 
-  font-size: 9px;
-  font-weight: 700;
+          </div>
 
-  letter-spacing: 0.7px;
-}
+        </aside>
 
-.live-badge span {
-  width: 5px;
-  height: 5px;
+        {/* ================= MAIN ================= */}
 
-  background: #ef4444;
+        <main className="min-w-0 flex-1">
 
-  border-radius: 50%;
+          {/* ================= TOP BAR ================= */}
 
-  box-shadow:
-    0 0 7px rgba(239, 68, 68, 0.8);
-}
+          <header className="flex h-[80px] items-center justify-between border-b border-slate-800 bg-[#091223] px-5 md:px-8">
 
-.view-button {
-  border: none;
+            {/* SEARCH */}
 
-  background: transparent;
+            <div className="relative w-full max-w-[420px]">
 
-  color: #60a5fa;
+              <Search
+                size={18}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
+              />
 
-  font-size: 11px;
+              <input
+                type="text"
+                placeholder="Search rooms, members..."
+                className="w-full rounded-xl border border-slate-700 bg-[#111a2d] py-3 pl-11 pr-4 text-sm text-white outline-none placeholder:text-slate-500 focus:border-indigo-500"
+              />
 
-  cursor: pointer;
-}
+            </div>
 
-.view-button:hover {
-  color: #93c5fd;
-}
+            {/* USER */}
 
-/* =====================================================
-   LIVE CARD
-   ===================================================== */
+            <div className="ml-4 flex items-center gap-5">
 
-.live-card {
-  background: #111c2e;
+              <button className="relative text-slate-400 hover:text-white">
 
-  border: 1px solid #1e293b;
+                <Bell size={21} />
 
-  border-radius: 12px;
+                <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px]">
+                  3
+                </span>
 
-  overflow: hidden;
-}
+              </button>
 
-.live-header {
-  height: 55px;
+              <button className="flex items-center gap-2">
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 font-semibold">
+                  P
+                </div>
 
-  padding: 0 20px;
+                <span className="hidden text-sm md:block">
+                  Pooja
+                </span>
 
-  border-bottom: 1px solid #1e293b;
-}
+                <ChevronDown size={15} className="text-slate-500" />
 
-.active-title {
-  display: flex;
-  align-items: center;
+              </button>
 
-  gap: 9px;
+            </div>
 
-  font-size: 12px;
-}
+          </header>
 
-.pulse {
-  width: 8px;
-  height: 8px;
+          {/* ================= CONTENT ================= */}
 
-  background: #ef4444;
+          <div className="space-y-6 p-5 md:p-8">
 
-  border-radius: 50%;
+            {/* ================= WELCOME + STATS ================= */}
 
-  box-shadow:
-    0 0 0 4px rgba(239, 68, 68, 0.1),
-    0 0 9px rgba(239, 68, 68, 0.5);
-}
+            <section className="grid gap-5 xl:grid-cols-[1.6fr_1fr]">
 
-.session-list {
-  padding: 0 20px;
-}
+              {/* WELCOME */}
 
-.session-row {
-  min-height: 62px;
+              <div className="relative overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-br from-[#151c3d] via-[#111a35] to-[#10192b] p-7">
 
-  display: grid;
+                <div className="relative z-10">
 
-  grid-template-columns: 1fr 1fr 90px;
+                  <p className="text-lg text-slate-300">
+                    Welcome back,
+                  </p>
 
-  align-items: center;
+                  <h1 className="mt-1 text-4xl font-bold">
+                    Pooja 👋
+                  </h1>
 
-  border-bottom: 1px solid #1e293b;
-}
+                  <p className="mt-3 max-w-lg text-sm leading-6 text-slate-400">
+                    Collaborate in real-time, turn your ideas into reality.
+                  </p>
 
-.session-row:last-child {
-  border-bottom: none;
-}
+                  <div className="mt-7 flex flex-wrap gap-3">
 
-.session-user {
-  display: flex;
-  align-items: center;
+                    <button className="flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold hover:bg-indigo-500">
+                      <Plus size={18} />
+                      Create Workspace
+                    </button>
 
-  gap: 11px;
-}
+                    <button className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900/40 px-5 py-3 text-sm font-semibold hover:border-indigo-500">
+                      <Link size={18} />
+                      Join Room
+                    </button>
 
-.session-avatar {
-  width: 31px;
-  height: 31px;
+                  </div>
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+                </div>
 
-  border-radius: 8px;
+                <div className="absolute -right-10 -top-10 h-60 w-60 rounded-full bg-indigo-600/20 blur-3xl" />
 
-  background: #26354b;
+                <div className="absolute -bottom-20 right-20 h-52 w-52 rounded-full bg-purple-600/20 blur-3xl" />
 
-  color: #cbd5e1;
+              </div>
 
-  font-size: 11px;
-  font-weight: 700;
-}
+              {/* STATS */}
 
-.session-user div:last-child {
-  display: flex;
-  flex-direction: column;
+              <div className="grid grid-cols-2 gap-4">
 
-  gap: 3px;
-}
+                <StatCard
+                  icon={Folder}
+                  title="Total Rooms"
+                  value="8"
+                />
 
-.session-user strong {
-  font-size: 12px;
-}
+                <StatCard
+                  icon={Activity}
+                  title="Active Sessions"
+                  value="3"
+                />
 
-.session-user span {
-  color: #64748b;
+                <StatCard
+                  icon={Users}
+                  title="Members"
+                  value="5"
+                />
 
-  font-size: 9px;
-}
+                <StatCard
+                  icon={LayoutGrid}
+                  title="Templates"
+                  value="4"
+                />
 
-.session-user span i {
-  display: inline-block;
+              </div>
 
-  width: 5px;
-  height: 5px;
+            </section>
 
-  margin-right: 5px;
+            {/* ================= ACTIVE + QUICK ================= */}
 
-  background: #22c55e;
+            <section className="grid gap-6 xl:grid-cols-[1.55fr_1fr]">
 
-  border-radius: 50%;
-}
+              {/* ACTIVE SESSIONS */}
 
-.session-type {
-  color: #94a3b8;
+              <div className="rounded-2xl border border-slate-800 bg-[#0d1628]">
 
-  font-size: 11px;
-}
+                <div className="flex items-center justify-between border-b border-slate-800 p-5">
 
-.open-button {
-  justify-self: end;
+                  <div>
 
-  padding: 6px 9px;
+                    <div className="flex items-center gap-2">
 
-  border: 1px solid #334155;
+                      <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
 
-  border-radius: 6px;
+                      <h2 className="text-lg font-semibold">
+                        Active Sessions
+                      </h2>
 
-  background: transparent;
+                    </div>
 
-  color: #94a3b8;
+                    <p className="mt-1 text-xs text-slate-500">
+                      Rooms currently in use
+                    </p>
 
-  font-size: 9px;
+                  </div>
 
-  cursor: pointer;
-}
+                  <button className="text-sm text-indigo-400 hover:text-indigo-300">
+                    View All →
+                  </button>
 
-.open-button:hover {
-  border-color: #3b82f6;
-  color: #60a5fa;
-}
+                </div>
 
-/* =====================================================
-   WORKSPACES
-   ===================================================== */
+                <div className="divide-y divide-slate-800">
 
-.workspace-grid {
-  display: grid;
+                  {activeSessions.map((room) => {
 
-  grid-template-columns:
-    repeat(3, minmax(0, 1fr));
+                    const Icon = room.icon;
 
-  gap: 16px;
-}
+                    return (
+                      <div
+                        key={room.name}
+                        className="flex items-center gap-4 p-5 hover:bg-white/[0.02]"
+                      >
 
-.workspace-card {
-  min-height: 180px;
+                        <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-indigo-600/20 text-indigo-400">
+                          <Icon size={21} />
+                        </div>
 
-  padding: 18px;
+                        <div className="min-w-0 flex-1">
 
-  background: #111c2e;
+                          <h3 className="truncate font-semibold">
+                            {room.name}
+                          </h3>
 
-  border: 1px solid #1e293b;
+                          <p className="mt-1 text-xs text-slate-500">
+                            Created by {room.creator} • {room.members} members
+                          </p>
 
-  border-radius: 11px;
+                          <div className="mt-2">
+                            <AvatarGroup count={room.members} />
+                          </div>
 
-  transition: all 0.2s ease;
+                        </div>
 
-  cursor: pointer;
-}
+                        <span
+                          className={`hidden rounded-full px-3 py-1 text-[11px] sm:block ${
+                            room.status === "Live"
+                              ? "bg-emerald-500/15 text-emerald-400"
+                              : "bg-slate-700 text-slate-400"
+                          }`}
+                        >
+                          {room.status === "Live" ? "● Live" : "◐ Idle"}
+                        </span>
 
-.workspace-card:hover {
-  transform: translateY(-3px);
+                        <button className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold hover:bg-indigo-500">
+                          Join
+                        </button>
 
-  border-color: #334155;
+                      </div>
+                    );
+                  })}
 
-  background: #142035;
-}
+                </div>
 
-.workspace-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+              </div>
 
-  margin-bottom: 19px;
-}
+              {/* QUICK ACTIONS */}
 
-.workspace-icon {
-  width: 38px;
-  height: 38px;
+              <div className="rounded-2xl border border-slate-800 bg-[#0d1628]">
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+                <div className="border-b border-slate-800 p-5">
 
-  border-radius: 9px;
+                  <h2 className="text-lg font-semibold">
+                    Quick Actions
+                  </h2>
 
-  background: #1d2b41;
+                  <p className="mt-1 text-xs text-slate-500">
+                    Get started with your workspace
+                  </p>
 
-  color: #60a5fa;
+                </div>
 
-  font-size: 15px;
-  font-weight: 700;
-}
+                <div className="grid grid-cols-2 gap-3 p-4">
 
-.more-button {
-  border: none;
+                  <QuickAction
+                    icon={Plus}
+                    title="Create Workspace"
+                    description="Start a new whiteboard or code room"
+                  />
 
-  background: transparent;
+                  <QuickAction
+                    icon={Link}
+                    title="Join Room"
+                    description="Enter a room with a share link or room ID"
+                  />
 
-  color: #475569;
+                  <QuickAction
+                    icon={FileText}
+                    title="Browse Templates"
+                    description="Use pre-built templates for quick start"
+                  />
 
-  font-size: 17px;
+                  <QuickAction
+                    icon={UserPlus}
+                    title="Invite Members"
+                    description="Collaborate with your team and friends"
+                  />
 
-  cursor: pointer;
-}
+                </div>
 
-.more-button:hover {
-  color: #94a3b8;
-}
+              </div>
 
-.workspace-card h3 {
-  margin: 0;
+            </section>
 
-  font-size: 14px;
-}
+            {/* ================= RECENT ROOMS ================= */}
 
-.workspace-members {
-  display: flex;
-  align-items: center;
+            <section className="overflow-hidden rounded-2xl border border-slate-800 bg-[#0d1628]">
 
-  gap: 6px;
+              <div className="flex items-center justify-between border-b border-slate-800 p-5">
 
-  margin: 9px 0 22px;
+                <div>
 
-  color: #64748b;
+                  <h2 className="text-lg font-semibold">
+                    Recent Rooms
+                  </h2>
 
-  font-size: 10px;
-}
+                  <p className="mt-1 text-xs text-slate-500">
+                    Quick access to your latest rooms
+                  </p>
 
-.workspace-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+                </div>
 
-  padding-top: 13px;
+                <button className="text-sm text-indigo-400 hover:text-indigo-300">
+                  View All →
+                </button>
 
-  border-top: 1px solid #1e293b;
-}
+              </div>
 
-.status {
-  display: flex;
-  align-items: center;
+              <div className="overflow-x-auto">
 
-  gap: 6px;
+                <table className="w-full min-w-[700px]">
 
-  color: #64748b;
+                  <thead className="border-b border-slate-800">
 
-  font-size: 9px;
-}
+                    <tr className="text-left text-xs text-slate-500">
 
-.status span {
-  width: 6px;
-  height: 6px;
+                      <th className="px-5 py-4">
+                        Room Name
+                      </th>
 
-  background: #475569;
+                      <th className="px-5 py-4">
+                        Type
+                      </th>
 
-  border-radius: 50%;
-}
+                      <th className="px-5 py-4">
+                        Last Active
+                      </th>
 
-.status.active {
-  color: #4ade80;
-}
+                      <th className="px-5 py-4">
+                        Members
+                      </th>
 
-.status.active span {
-  background: #22c55e;
+                      <th className="px-5 py-4 text-right">
+                        Actions
+                      </th>
 
-  box-shadow:
-    0 0 6px rgba(34, 197, 94, 0.5);
-}
+                    </tr>
 
-.workspace-arrow {
-  color: #475569;
+                  </thead>
 
-  font-size: 14px;
-}
+                  <tbody className="divide-y divide-slate-800">
 
-/* =====================================================
-   RESPONSIVE
-   ===================================================== */
+                    {recentRooms.map((room) => (
 
-@media (max-width: 1000px) {
+                      <tr
+                        key={room.name}
+                        className="hover:bg-white/[0.02]"
+                      >
 
-  .sidebar {
-    width: 200px;
-  }
+                        <td className="px-5 py-4">
 
-  .main {
-    padding: 35px 30px;
-  }
+                          <div className="flex items-center gap-3">
 
-  .workspace-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
+                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600/20 text-indigo-400">
 
-@media (max-width: 750px) {
+                              {room.type === "Whiteboard" ? (
+                                <PenTool size={17} />
+                              ) : (
+                                <Code2 size={17} />
+                              )}
 
-  .header {
-    padding: 0 18px;
-  }
+                            </div>
 
-  .profile-info,
-  .arrow {
-    display: none;
-  }
+                            <span className="text-sm font-medium">
+                              {room.name}
+                            </span>
 
-  .sidebar {
-    width: 65px;
+                          </div>
 
-    padding: 25px 8px;
-  }
+                        </td>
 
-  .menu-title,
-  .nav-link span:not(.nav-icon),
-  .sidebar-bottom {
-    display: none;
-  }
+                        <td className="px-5 py-4">
 
-  .nav-link {
-    justify-content: center;
+                          <span
+                            className={`rounded-md px-2.5 py-1 text-xs ${
+                              room.type === "Whiteboard"
+                                ? "bg-purple-500/15 text-purple-400"
+                                : "bg-emerald-500/15 text-emerald-400"
+                            }`}
+                          >
+                            {room.type}
+                          </span>
 
-    padding: 12px 5px;
-  }
+                        </td>
 
-  .nav-icon {
-    font-size: 18px;
-  }
+                        <td className="px-5 py-4 text-sm text-slate-500">
+                          {room.lastActive}
+                        </td>
 
-  .main {
-    padding: 30px 20px;
-  }
+                        <td className="px-5 py-4">
+                          <AvatarGroup count={room.members} />
+                        </td>
 
-  .action-grid {
-    grid-template-columns: 1fr;
-  }
+                        <td className="px-5 py-4">
 
-  .session-row {
-    grid-template-columns: 1fr 1fr;
-  }
+                          <div className="flex justify-end gap-2">
 
-  .open-button {
-    display: none;
-  }
-}
+                            <button className="rounded-lg border border-slate-700 px-4 py-2 text-xs hover:border-indigo-500 hover:text-indigo-400">
+                              Join
+                            </button>
 
-@media (max-width: 550px) {
+                            <button className="p-2 text-slate-500 hover:text-white">
+                              <MoreVertical size={17} />
+                            </button>
 
-  .main {
-    padding: 25px 15px;
-  }
+                          </div>
 
-  .welcome {
-    align-items: flex-start;
+                        </td>
 
-    flex-direction: column;
+                      </tr>
 
-    gap: 15px;
-  }
+                    ))}
 
-  .welcome h1 {
-    font-size: 24px;
-  }
+                  </tbody>
 
-  .online-status {
-    align-self: flex-start;
-  }
+                </table>
 
-  .workspace-grid {
-    grid-template-columns: 1fr;
-  }
+              </div>
 
-  .session-row {
-    grid-template-columns: 1fr;
+            </section>
 
-    gap: 6px;
+          </div>
 
-    padding: 12px 0;
-  }
+        </main>
 
-  .session-type {
-    padding-left: 42px;
-  }
+      </div>
+    </div>
+  );
 }

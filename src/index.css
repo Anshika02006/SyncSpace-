@@ -1,23 +1,26 @@
-html {
-  margin: 0;
-  padding: 0;
-  background: #0b1120;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  min-width: 320px;
-  min-height: 100vh;
-}
+@import "tailwindcss";
 
 * {
   box-sizing: border-box;
 }
 
-button,
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #070d1b;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+button {
+  cursor: pointer;
+}
+
 input,
-textarea,
-select {
-  font: inherit;
+button {
+  font-family: inherit;
 }
