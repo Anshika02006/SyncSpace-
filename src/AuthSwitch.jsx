@@ -33,7 +33,8 @@ export default function AuthSwitch() {
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem("token", data.token);
-        navigate("/");
+        localStorage.setItem("userName", data.name);
+        navigate("/dashboard");
       } else {
         alert(data.message);
       }
@@ -43,29 +44,30 @@ export default function AuthSwitch() {
   }
 
   async function handleSignup(event) {
-    event.preventDefault();
-    if (!isPasswordValid(signupPassword)) {
-      alert('Password must be at least 8 characters and include a number, and a special character.');
-      return;
-    }
-    setLoading(true);
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email: signupEmail, password: signupPassword }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        alert("Account created! Please sign in.");
-        setIsSignUp(false);
-      } else {
-        alert(data.message);
-      }
-    } finally {
-      setLoading(false);
-    }
+  event.preventDefault();
+  if (!isPasswordValid(signupPassword)) {
+    alert('Password must be at least 8 characters and include a number, and a special character.');
+    return;
   }
+  setLoading(true);
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email: signupEmail, password: signupPassword }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userName", data.name);
+      navigate("/dashboard");
+    } else {
+      alert(data.message);
+    }
+  } finally {
+    setLoading(false);
+  }
+}
 
   return (
     <div className="auth-switch">
