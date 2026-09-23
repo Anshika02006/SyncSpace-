@@ -47,10 +47,13 @@ export default function Dashboard({ userName, onJoinRoom, onEnterRoom }) {
     }
     onEnterRoom?.(createdRoom);
 };
-  const handleJoinRoom = (code) => {
+const handleJoinRoom = (code) => {
     setModal(null);
+    if (code) {
+      navigate(`/room/${code}`);
+    }
     onJoinRoom?.(code);
-  };
+};
 
   const handleLogout = () => {
     localStorage.removeItem("token");
