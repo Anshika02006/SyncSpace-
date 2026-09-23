@@ -40,11 +40,13 @@ export default function Dashboard({ userName, onJoinRoom, onEnterRoom }) {
     setRecentRooms((rooms) => [{ id: Date.now(), name: room.name, updated: "just now" }, ...rooms]);
   };
 
-  const handleGoToRoom = () => {
+ const handleGoToRoom = () => {
     setModal(null);
+    if (createdRoom?.code) {
+      navigate(`/room/${createdRoom.code}`);
+    }
     onEnterRoom?.(createdRoom);
-  };
-
+};
   const handleJoinRoom = (code) => {
     setModal(null);
     onJoinRoom?.(code);
