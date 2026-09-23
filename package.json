@@ -1,18 +1,26 @@
 {
-  "name": "landing",
+  "name": "syncspace",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "y-websocket"
   },
   "dependencies": {
+    "lucide-react": "^1.47.0",
+    "@monaco-editor/react": "^4.7.0",
+    "@y/websocket-server": "^0.1.5",
+    "monaco-editor": "^0.52.2",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-router-dom": "^7.18.3"
+    "react-router-dom": "^7.18.3",
+    "y-monaco": "^0.1.6",
+    "y-websocket": "^3.0.0",
+    "yjs": "^13.6.27"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
