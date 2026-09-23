@@ -41,7 +41,13 @@ router.post('/signup', async (req, res) => {
       password: hashedPassword,
     });
 
-    return res.status(201).json({ message: 'Account created', userId: user._id });
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    return res.status(201).json({ token, name: user.name, email: user.email });
   } catch (err) {
     console.error('Signup error:', err);
     return res.status(500).json({ message: 'Something went wrong. Please try again.' });
