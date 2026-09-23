@@ -1,8 +1,9 @@
-import { BrowserRouter , Routes, Route} from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPage from "./LandingPage";
-import ForgotPassword from './ForgotPassword';
-import AuthSwitch from './AuthSwitch';
-import Dashboard from './Dashboard';
+import ForgotPassword from "./ForgotPassword";
+import AuthSwitch from "./AuthSwitch";
+import Dashboard from "./Dashboard";
+import Room from "./components/Room";
 import "./App.css";
 
 function App() {
@@ -14,9 +15,10 @@ function App() {
         <Route path="/signup" element={<AuthSwitch />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route
-  path="/dashboard"
-  element={<Dashboard userName={localStorage.getItem("userName") || "User"} />}
-/>
+          path="/dashboard"
+          element={<Dashboard userName={localStorage.getItem("userName") || "User"} />}
+        />
+        <Route path="/room/:roomId" element={<Room />} />
       </Routes>
     </BrowserRouter>
   );
