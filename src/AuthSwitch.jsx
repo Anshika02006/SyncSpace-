@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useNavigate, Link  } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 
 export default function AuthSwitch() {
-  const [isSignUp, setIsSignUp] = useState(false);
+  const location = useLocation();
+  const [isSignUp, setIsSignUp] = useState(location.pathname === "/signup");
   const [loading, setLoading] = useState(false);
 
   // sign in fields

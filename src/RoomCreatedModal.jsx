@@ -22,6 +22,7 @@ export default function RoomCreatedModal({ room, onGoToRoom, onBack }) {
         }
         .ssr-overlay * { box-sizing: border-box; }
         .ssr-modal {
+          position: relative;
           background: #111c2e;
           color: #f1f5f9;
           border-radius: 18px; width: 100%; max-width: 440px;
@@ -29,6 +30,25 @@ export default function RoomCreatedModal({ room, onGoToRoom, onBack }) {
           box-shadow: 0 10px 40px rgba(0,0,0,0.6);
           border: 1px solid rgba(59,130,246,0.2);
           max-height: 90vh; overflow-y: auto; text-align: left;
+        }
+        .ssr-back-circle {
+          position: absolute;
+          top: 18px;
+          left: 18px;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: rgba(59,130,246,0.12);
+          border: 1px solid rgba(59,130,246,0.2);
+          color: #f1f5f9;
+          font-size: 15px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+        }
+        .ssr-back-circle:hover {
+          background: rgba(59,130,246,0.24);
         }
         .ssr-success-icon {
           width: 56px; height: 56px; border-radius: 50%;
@@ -63,6 +83,10 @@ export default function RoomCreatedModal({ room, onGoToRoom, onBack }) {
       `}</style>
 
       <div className="ssr-modal">
+        <button type="button" className="ssr-back-circle" onClick={onBack} aria-label="Back">
+          ←
+        </button>
+
         <div className="ssr-success-icon">✓</div>
         <div className="ssr-modal-header">
           <h2>Room Created Successfully!</h2>
@@ -95,7 +119,6 @@ export default function RoomCreatedModal({ room, onGoToRoom, onBack }) {
         <button type="button" className="ssr-share-link" onClick={copyInviteLink}>
           {linkCopied ? "Invite link copied!" : "Share Invite Link"}
         </button>
-        <button type="button" className="ssr-share-link" onClick={onBack}>← Back</button>
       </div>
     </div>
   );

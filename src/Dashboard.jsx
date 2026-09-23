@@ -1,14 +1,16 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Home, Folder, Video, User, Settings, LogOut, Plus, Users, Bell } from "lucide-react";
 import CreateRoomModal from "./CreateRoomModal";
 import RoomCreatedModal from "./RoomCreatedModal";
 import JoinMeetingModal from "./JoinMeetingModal";
 
 const NAV_ITEMS = [
-  { id: "home", icon: "🏠", label: "Home" },
-  { id: "rooms", icon: "🗂️", label: "Rooms" },
-  { id: "meetings", icon: "🎥", label: "Meetings" },
-  { id: "profile", icon: "👤", label: "Profile" },
-  { id: "settings", icon: "⚙️", label: "Settings" },
+  { id: "home", icon: <Home size={18} />, label: "Home" },
+  { id: "rooms", icon: <Folder size={18} />, label: "Rooms" },
+  { id: "meetings", icon: <Video size={18} />, label: "Meetings" },
+  { id: "profile", icon: <User size={18} />, label: "Profile" },
+  { id: "settings", icon: <Settings size={18} />, label: "Settings" },
 ];
 
 const INITIAL_RECENT_ROOMS = [
@@ -20,11 +22,12 @@ const INITIAL_RECENT_ROOMS = [
 function randomRoomCode() {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789";
   let code = "";
-  for (let i = 0; ia < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
   return code;
 }
 
 export default function Dashboard({ userName, onJoinRoom, onEnterRoom }) {
+  const navigate = useNavigate();
   const [activeNav, setActiveNav] = useState("home");
   const [modal, setModal] = useState(null); // null | "create" | "created" | "join"
   const [createdRoom, setCreatedRoom] = useState(null);
@@ -45,6 +48,12 @@ export default function Dashboard({ userName, onJoinRoom, onEnterRoom }) {
   const handleJoinRoom = (code) => {
     setModal(null);
     onJoinRoom?.(code);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userName");
+    navigate("/signin");
   };
 
   return (
@@ -84,7 +93,19 @@ export default function Dashboard({ userName, onJoinRoom, onEnterRoom }) {
           gap: 28px;
         }
         .ss-logo { display: flex; align-items: center; gap: 10px; padding: 0 8px; font-size: 19px; font-weight: 600; }
-        .ss-logo-mark { font-size: 20px; }
+         .ss-logo-mark {
+          display: flex;
+          align-items: center;
+           justify-content: center;
+            width: 36px;
+           height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+           color: #fff;
+           font-size: 15px;
+           font-weight: 700;
+           flex-shrink: 0;
+           }
         .ss-nav { display: flex; flex-direction: column; gap: 4px; }
         .ss-nav-item {
           display: flex; align-items: center; gap: 12px;
@@ -180,8 +201,8 @@ export default function Dashboard({ userName, onJoinRoom, onEnterRoom }) {
         </nav>
 
         <div className="ss-sidebar-footer">
-          <button className="ss-logout">
-            <span className="ss-nav-icon">↩</span>
+          <button className="ss-logout" onClick={handleLogout}>
+            <span className="ss-nav-icon"><LogOut size={18} /></span>
             Logout
           </button>
         </div>
@@ -200,15 +221,15 @@ export default function Dashboard({ userName, onJoinRoom, onEnterRoom }) {
 
         <div className="ss-action-grid">
           <div className="ss-action-card">
-            <div className="ss-action-icon">+</div>
-            <h3>Create Room</h3>
+  <div className="ss-action-icon"><Plus size={24} /></div>
+  <h3>Create Room</h3>
             <p>Create a new room and invite others to collaborate.</p>
             <button className="ss-btn ss-btn-primary" onClick={() => setModal("create")}>Create Room</button>
           </div>
 
           <div className="ss-action-card">
-            <div className="ss-action-icon">👥</div>
-            <h3>Join the Meeting</h3>
+  <div className="ss-action-icon"><Users size={24} /></div>
+  <h3>Join the Meeting</h3>
             <p>Enter a code to join an existing session.</p>
             <button className="ss-btn ss-btn-primary" onClick={() => setModal("join")}>Join Meeting</button>
           </div>
