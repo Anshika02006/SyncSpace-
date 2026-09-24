@@ -31,8 +31,7 @@ SyncSpace is a real-time collaboration platform that combines a shared whiteboar
 - Team Group 1
 - Anshika Aagrawa
 - Sayali
-- pooja
-- prakash
+
 
 ## License
 
