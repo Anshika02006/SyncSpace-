@@ -18,9 +18,10 @@ export default function AuthSwitch() {
   const navigate = useNavigate();
 
   function isPasswordValid(password) {
-  const regex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
   return regex.test(password);
 }
+
 
   async function handleSignin(event) {
     event.preventDefault();
