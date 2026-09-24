@@ -1,21 +1,39 @@
-<<<<<<< HEAD
-# React + Vite
+# SyncSpace
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SyncSpace is a real-time collaboration platform that combines a shared whiteboard and a live code editor in one seamless workspace — built for teams, study groups, and pair programming sessions.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- 🔐 Authentication— Sign up / Sign in flow to access your workspace
+- 📊 Dashboard — Central hub to create or join collaboration rooms
+- 🎨 Interactive Whiteboard — Draw, sketch, and brainstorm with pen, shapes, text, sticky notes, and eraser tools, plus zoom and undo/redo support
+- 💻 Live Code Editor — Write and edit code collaboratively in real time
+- 🔗 Room-based Collaboration — Create a room and share the room code/link, or join an existing room instantly
+- 👥 Real-time Sync — Multiple users can draw and code together with live updates across all connected clients
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Frontend: React, Vite
+- Real-time Collaboration:Yjs, y-websocket, y-monaco
+- Routing: React Router
+- Backend: Node.js
+- Database: mongo DB
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-=======
-# SyncSpace-
-PROJECT OF GROUP1
->>>>>>> bc0d4b47f047fd713f8aba484602655e8185475e
+## How It Works
+
+1. Sign up or sign in to your account
+2. From the dashboard, **Create a Room** or **Join a Room** using a room code
+3. Once inside a room, collaborate live on the whiteboard and code editor with your teammates
+
+## Contributors
+
+- Team Group 1
+- Anshika Aagrawa
+- Sayali
+- pooja
+- prakash
+
+## License
+
+This project is for educational purposes as part of a group project.
