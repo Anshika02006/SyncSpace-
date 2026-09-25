@@ -33,7 +33,7 @@ https://sync-space-29g6.vercel.app/
 
 - Team Group 1
 - Anshika Aagrawa
-- Sayali
+- Sayali Mahale
 
 
 ## License
