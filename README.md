@@ -26,6 +26,9 @@ SyncSpace is a real-time collaboration platform that combines a shared whiteboar
 2. From the dashboard, **Create a Room** or **Join a Room** using a room code
 3. Once inside a room, collaborate live on the whiteboard and code editor with your teammates
 
+🌐 Live Demo <br>
+https://sync-space-29g6.vercel.app/
+
 ## Contributors
 
 - Team Group 1
