@@ -485,12 +485,14 @@ export default function AuthSwitch() {
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
                     <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                        </svg>
-                <input
-                  type="password"
-                  placeholder="Password"
-                  value={signinPassword}
-                  onChange={(e) => setSigninPassword(e.target.value)}
-                />
+               <input
+                   type="password"
+                   placeholder="Password"
+                   value={signupPassword}
+                   onChange={(e) => setSignupPassword(e.target.value)}
+                   onInput={(e) => setSignupPassword(e.target.value)}
+                   autoComplete="new-password"
+                  />
               </div>
 
               <div style={{ width: '100%', maxWidth: '380px', textAlign: 'right', marginTop: '-6px', marginBottom: '10px' }}>
